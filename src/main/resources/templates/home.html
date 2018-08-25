@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Banco Atlantico</title>
+		<link rel="icon" th:href="@{/img/favicon.ico}">
+		<link th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet"></link>
+		<script th:src="@{/webjars/jquery/3.3.1-1/jquery.min.js}"></script>
+		<script th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.min.js}"></script>
+		
+	
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="jumbotron">
+			    <h1>Banco Atlântico</h1>
+			    <p>Selecione entre as opções disponíveis:</p>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row" style="padding:5%">
+				<div class="col">
+					<button type="button" class="btn btn-primary" 
+					id="buttonTodasNotas" style="width:100%;padding:4%">
+							Consultar notas
+					</button>
+				</div>
+			    <div class="col">
+			    	<button type="button" class="btn btn-primary" 
+			    	id="buttonSaldo" style="width:100%;padding:4%">
+			    			Saldo
+			    	</button>
+			    </div>
+			    <div class="w-100" style="padding:2%"></div>
+			    <div class="col">
+			    	<button type="button" class="btn btn-primary" 
+			    	id="buttonSacar" 
+			    	style="width:100%;padding:4%">Sacar</button>
+			    </div>
+			    <div class="col">
+			    	<button type="button" class="btn btn-primary" 
+			    	style="width:100%;padding:4%">
+			    		Depositar
+			    	</button>
+			    </div>
+			</div>
+		</div>
+		
+		<!-- Modal -->
+		<div class="modal fade" id="modalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title">Resultado</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body" id="modalInfo" style="white-space:pre-line;">
+		        ...
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+		<!-- Modal Form -->
+		<div class="modal fade" id="modalCenterForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title">Informe os campos</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		       	<form th:action="@{/caixa/sacar}" th:object="${cedula}" method="post">
+		       		 <div class="form-group">
+					    <label for="valorField">Valor</label>
+					    <input th:field="*{valor}" type="text" class="form-control" required='required' id="valorField" placeholder="Valor">
+					  </div>
+					  <button id="inputSacarForm" type="button" class="btn btn-primary">Submit</button>
+		       	</form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+	</body>
+	
+	
+	<script>
+			$(document.this).ready(function () {
+				$('#buttonSacar').on("click", function(e){
+			      	e.preventDefault();
+			      	$('#modalCenterForm').modal(); 	
+								        	
+			      });
+			});
+							
+			$(document.this).ready(function () {
+				$('#buttonSaldo').on("click", function(e){
+			      e.preventDefault();
+											
+			      $.ajax({
+			          type:"GET",
+			          url:"http://localhost:8082/app/caixa/consultarSaldo",
+		                  success:function (data) {
+			            	   $('#modalCenter').modal(); 
+			            	   $("#modalInfo").text(data); 
+				          }
+		                  });	
+								        	
+			      });
+			});
+
+			$(document.this).ready(function () {
+				$('#buttonTodasNotas').on("click", function(e){
+			      e.preventDefault();
+											
+			      $.ajax({
+			          type:"GET",
+			          url:"http://localhost:8082/app/caixa/pegarTodasNotas",
+		                  success:function (data) {
+			            	   $('#modalCenter').modal(); 
+			            	   $("#modalInfo").text(data); 
+				          }
+		                  });	
+								        	
+			      });
+			});
+
+			$(document.this).ready(function () {
+				$('#inputSacarForm').on("click", function(e){
+			      e.preventDefault();
+											
+			      $.ajax({
+			          type:"POST",
+			          url:"http://localhost:8082/app/caixa/sacar",
+			          data: {valor: $('#valorField').val()},
+		                  success:function (data) {
+		                	  $('#modalCenterForm').modal('hide'); 
+			            	   $('#modalCenter').modal(); 
+			            	   $("#modalInfo").text(data); 
+				          }
+		                  });	
+								        	
+			      });
+			});
+		</script>
+</html>
