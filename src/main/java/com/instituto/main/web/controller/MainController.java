@@ -1,18 +1,15 @@
 package com.instituto.main.web.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,44 +24,6 @@ public class MainController {
 
 	@GetMapping(value="/home")
 	public ModelAndView index() {
-		
-//		RestTemplate restTemplate = new RestTemplate();
-		
-		//Pegando pelo ID
-		
-//		Cedula cedula
-//			= restTemplate.getForObject("http://localhost:8088/caixaWS/cedula/1", Cedula.class);
-//		
-//		System.out.println(cedula.getValor());
-		
-		
-		//DEPOSITANDO NO BANCO
-//		List<Cedula> cedulas = new ArrayList<Cedula>();
-//		Cedula cedula = new Cedula();
-//		cedula.setValor(2);
-//		cedula.setQuantidade(100);
-//		cedulas.add(cedula);
-//		
-//		Boolean response = restTemplate.postForObject(
-//				  "http://localhost:8088/caixaWS/cedula/depositar",
-//				  cedulas,
-//				  Boolean.class);
-//
-//		
-//		System.out.println(response);
-		
-		//SACANDO NO BANCO
-//		ResponseEntity<List<Cedula>> response = restTemplate.exchange(
-//		  "http://localhost:8088/caixaWS/cedula/sacar/92",
-//		  HttpMethod.GET,
-//		  null,
-//		  new ParameterizedTypeReference<List<Cedula>>(){});
-//
-//		List<Cedula> cedulas = response.getBody();
-//		
-//		for(int i = 0; i < cedulas.size(); i++) {
-//			System.out.println(cedulas.get(i).getValor()+" "+cedulas.get(i).getQuantidade());
-//		}
 		
 		ModelAndView modelAndView = new ModelAndView("home");
 		modelAndView.addObject("cedula", new Cedula());
@@ -92,6 +51,56 @@ public class MainController {
 			}
 		} else {
 			resultado = "Não foi possível realizar o saque.";
+		}
+		
+		return resultado;
+	}
+	
+	@PostMapping(value="/depositar")
+	@ResponseBody
+	public String depositar(@RequestParam Integer quantidade2,
+			@RequestParam Integer quantidade5, @RequestParam Integer quantidade10,
+			@RequestParam Integer quantidade20, @RequestParam Integer quantidade50) {
+		
+		RestTemplate restTemplate = new RestTemplate();
+		
+		List<Cedula> cedulas = new ArrayList<Cedula>();
+		
+		Cedula cedulaDe2 = new Cedula();
+		cedulaDe2.setValor(2);
+		cedulaDe2.setQuantidade(quantidade2);
+		cedulas.add(cedulaDe2);
+		
+		Cedula cedulaDe5 = new Cedula();
+		cedulaDe5.setValor(5);
+		cedulaDe5.setQuantidade(quantidade5);
+		cedulas.add(cedulaDe5);
+		
+		Cedula cedulaDe10 = new Cedula();
+		cedulaDe10.setValor(10);
+		cedulaDe10.setQuantidade(quantidade10);
+		cedulas.add(cedulaDe10);
+		
+		Cedula cedulaDe20 = new Cedula();
+		cedulaDe20.setValor(20);
+		cedulaDe20.setQuantidade(quantidade20);
+		cedulas.add(cedulaDe20);
+		
+		Cedula cedulaDe50 = new Cedula();
+		cedulaDe50.setValor(50);
+		cedulaDe50.setQuantidade(quantidade50);
+		cedulas.add(cedulaDe50);
+		
+		Boolean response = restTemplate.postForObject(
+		  "http://localhost:8088/caixaWS/cedula/depositar",
+		  cedulas,
+		  Boolean.class);
+		
+		String resultado = "";
+		if(response) {
+			resultado = "Depósito realizado com sucesso.";
+		} else {
+			resultado = "Não foi possível realizar o depósito.";
 		}
 		
 		return resultado;

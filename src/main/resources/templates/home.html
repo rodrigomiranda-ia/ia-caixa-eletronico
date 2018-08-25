@@ -40,7 +40,7 @@
 			    </div>
 			    <div class="col">
 			    	<button type="button" class="btn btn-primary" 
-			    	style="width:100%;padding:4%">
+			    	style="width:100%;padding:4%" id="buttonDepositar">
 			    		Depositar
 			    	</button>
 			    </div>
@@ -72,18 +72,60 @@
 		  <div class="modal-dialog modal-dialog-centered" role="document">
 		    <div class="modal-content">
 		      <div class="modal-header">
-		        <h5 class="modal-title">Informe os campos</h5>
+		        <h5 class="modal-title">Informe o valor</h5>
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		          <span aria-hidden="true">&times;</span>
 		        </button>
 		      </div>
 		      <div class="modal-body">
-		       	<form th:action="@{/caixa/sacar}" th:object="${cedula}" method="post">
+		       	<form id="formSacar" th:action="@{/caixa/sacar}" th:object="${cedula}" method="post">
 		       		 <div class="form-group">
 					    <label for="valorField">Valor</label>
 					    <input th:field="*{valor}" type="text" class="form-control" required='required' id="valorField" placeholder="Valor">
 					  </div>
-					  <button id="inputSacarForm" type="button" class="btn btn-primary">Submit</button>
+					  <input id="inputSacarForm" value="Sacar" type="submit" class="btn btn-primary" />
+		       	</form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+		<!-- Modal Form -->
+		<div class="modal fade" id="modalDepositForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title">Informe as quantidades</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		      
+				<p><small>A quantidade de cada nota pode ser 0.</small></p>
+				<hr>
+				
+		       	<form id="formDepositar" th:action="@{/caixa/sacar}" th:object="${cedula}" method="post">
+		       		 <div class="form-group">
+					    <label for="deposito2">Notas de R$ 2,00</label>
+					    <input value="0" type="text" class="form-control" required='required' id="deposito2">
+					  	
+					  	<label for="deposito5">Notas de R$ 5,00</label>
+					    <input value="0" type="text" class="form-control" required='required' id="deposito5">
+					    
+					    <label for="deposito10">Notas de R$ 10,00</label>
+					    <input value="0" type="text" class="form-control" required='required' id="deposito10">
+					    
+					    <label for="deposito20">Notas de R$ 20,00</label>
+					    <input value="0" type="text" class="form-control" required='required' id="deposito20">
+					    
+					    <label for="deposito50">Notas de R$ 50,00</label>
+					    <input value="0" type="text" class="form-control" required='required' id="deposito50">
+					  </div>
+					  <input id="inputDepositarForm" type="submit" value="Depositar" class="btn btn-primary" />
 		       	</form>
 		      </div>
 		      <div class="modal-footer">
@@ -101,6 +143,14 @@
 				$('#buttonSacar').on("click", function(e){
 			      	e.preventDefault();
 			      	$('#modalCenterForm').modal(); 	
+								        	
+			      });
+			});
+
+			$(document.this).ready(function () {
+				$('#buttonDepositar').on("click", function(e){
+			      	e.preventDefault();
+			      	$('#modalDepositForm').modal(); 	
 								        	
 			      });
 			});
@@ -138,15 +188,39 @@
 			});
 
 			$(document.this).ready(function () {
-				$('#inputSacarForm').on("click", function(e){
+				
+				$("#formSacar").submit(function(e){
 			      e.preventDefault();
-											
+
 			      $.ajax({
 			          type:"POST",
 			          url:"http://localhost:8082/app/caixa/sacar",
 			          data: {valor: $('#valorField').val()},
 		                  success:function (data) {
 		                	  $('#modalCenterForm').modal('hide'); 
+			            	   $('#modalCenter').modal(); 
+			            	   $("#modalInfo").text(data); 
+				          }
+		                  });	
+								        	
+			      });
+			});
+
+			$(document.this).ready(function () {
+				$('#formDepositar').submit(function(e){
+			      e.preventDefault();
+		
+			      $.ajax({
+			          type:"POST",
+			          url:"http://localhost:8082/app/caixa/depositar",
+			          data: { quantidade2: $('#deposito2').val(),
+			        	  	  quantidade5: $('#deposito5').val(),
+			        	  	  quantidade10: $('#deposito10').val(),
+			        	  	  quantidade20: $('#deposito20').val(),
+			        	  	  quantidade50: $('#deposito50').val(),
+			        	  	 },
+		                  success:function (data) {
+		                	  $('#modalDepositForm').modal('hide'); 
 			            	   $('#modalCenter').modal(); 
 			            	   $("#modalInfo").text(data); 
 				          }
